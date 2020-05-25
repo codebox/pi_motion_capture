@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test</title>
+    </head>
+    <body>
+        <h1>Camera</h1>
+        <div id="imgs">
+
+        </div>
+        <script>
+            imgs = new Set();
+            setInterval(() => {
+                fetch('images.json')
+                        .then(response => response.json())
+                        .then(json => {
+                            const elImgs = document.getElementById('imgs');
+                            json.sort().filter(imgName => !imgs.has(imgName)).reverse().forEach(newImg => {
+                                imgs.add(newImg)
+                                const elImg = document.createElement('img');
+                                elImg.setAttribute('src', 'images/' + newImg);
+                                elImgs.insertAdjacentElement('afterbegin', elImg);
+                            });
+                        });
+            }, 3000)
+        </script>
+    </body>
+</html>

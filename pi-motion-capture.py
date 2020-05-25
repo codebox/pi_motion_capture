@@ -16,7 +16,7 @@ config = {
         'b': 0
     },
     'boxThickness': 2,
-    'imgOutDir': '/home/pi/homedata/public',
+    'imgOutDir': 'web/images',
     'imgFileNamePrefix': 'cam'
 }
 
