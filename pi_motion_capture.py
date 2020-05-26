@@ -52,7 +52,7 @@ class MotionCapture:
                 (x, y, w, h) = cv2.boundingRect(contour)
                 cropped_colour_frame = cv2.rectangle(cropped_colour_frame, (x, y), (x + w, y + h), box_colour, self.config['boxThickness'])
                 img_file_name = os.path.join(self.config['imageDir'], '{}{:06d}.jpg'.format(self.config['imgFileNamePrefix'], img_index))
-                cv2.imwrite(img_file_name, colour_frame)
+                cv2.imwrite(img_file_name, cv2.cvtColor(colour_frame, cv2.COLOR_RGB2BGR))
                 img_index += 1
 
         print('Stopping motion capture')
