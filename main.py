@@ -33,7 +33,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 os.chdir(config['webDir'])
-[os.remove(f) for f in glob.glob(os.path.join(config['imageDir'], ".jpg"))]
+[os.remove(f) for f in glob.glob(os.path.join(config['imageDir'], "*.jpg"))]
 
 message_queue = Queue()
 motion_capture = MotionCapture(config, message_queue)
