@@ -1,6 +1,7 @@
 import cv2, signal, os, glob
 from pi_motion_capture import MotionCapture
 from web_server import WebServer
+from queue import Queue
 
 config = {
     'captureDevice': 0,
@@ -21,7 +22,8 @@ config = {
     'imgFileNamePrefix': 'cam',
     'httpPort': 8000,
     'webDir': 'web',
-    'imageDir': 'images'
+    'imageDir': 'images',
+    'snapshotFile': 'snapshot.jpg'
 }
 
 def signal_handler(sig, frame):
@@ -33,8 +35,9 @@ signal.signal(signal.SIGINT, signal_handler)
 os.chdir(config['webDir'])
 [os.remove(f) for f in glob.glob(os.path.join(config['imageDir'], ".jpg"))]
 
-motion_capture = MotionCapture(config)
+message_queue = Queue()
+motion_capture = MotionCapture(config, message_queue)
 motion_capture.start()
 
-web_server = WebServer(config)
+web_server = WebServer(config, message_queue)
 web_server.start()

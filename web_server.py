@@ -3,11 +3,13 @@ import socketserver, socket
 import os
 import json
 import threading
-
+from functools import partial
+from pi_motion_capture import MotionCapture
 
 class WebServer:
-    def __init__(self, config):
+    def __init__(self, config, queue):
         self.config = config
+        self.queue = queue
         self.running = False
         self.server = None
 
@@ -18,8 +20,8 @@ class WebServer:
             self.worker_thread.start()
 
     def _run(self):
-        PiMotionCaptureRequestHandler.config = self.config
-        self.server = TCPServerThatTerminatesProperly(("", self.config['httpPort']), PiMotionCaptureRequestHandler)
+        handler = partial(PiMotionCaptureRequestHandler, self.config, self.queue)
+        self.server = TCPServerThatTerminatesProperly(("", self.config['httpPort']), handler)
         print("Listening on port", self.config['httpPort'])
         self.server.serve_forever()
 
@@ -31,13 +33,23 @@ class WebServer:
 
 
 class PiMotionCaptureRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, config, queue, *args, **kwargs):
+        self.config = config
+        self.queue = queue
+        super().__init__(*args, **kwargs)
+
     def do_GET(self):
         if self.path == '/images.json':
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            json_string = json.dumps(os.listdir(PiMotionCaptureRequestHandler.config['imageDir']))
+            json_string = json.dumps(os.listdir(self.config['imageDir']))
             self.wfile.write(json_string.encode(encoding='utf_8'))
+
+        elif self.path == '/snapshot':
+            self.queue.put(MotionCapture.TASK_SNAPSHOT)
+            self.send_response(200)
+            self.end_headers()
 
         else:
             if self.path == '/':
