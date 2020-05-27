@@ -13,3 +13,4 @@ if [ ! -d $ENV_DIR ]; then
 else
     activate
 fi
+sudo modprobe bcm2835-v4l2

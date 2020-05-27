@@ -1,4 +1,4 @@
-import cv2, signal, os
+import cv2, signal, os, glob
 from pi_motion_capture import MotionCapture
 from web_server import WebServer
 
@@ -31,6 +31,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 os.chdir(config['webDir'])
+[os.remove(f) for f in glob.glob(os.path.join(config['imageDir'], ".jpg"))]
 
 motion_capture = MotionCapture(config)
 motion_capture.start()
