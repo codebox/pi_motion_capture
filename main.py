@@ -1,6 +1,7 @@
 import cv2, signal, os, glob
 from pi_motion_capture import MotionCapture
 from web_server import WebServer
+from classifier import Classifier
 from queue import Queue
 
 config = {
@@ -23,12 +24,15 @@ config = {
     'httpPort': 8000,
     'webDir': 'web',
     'imageDir': 'images',
-    'snapshotFile': 'snapshot.jpg'
+    'snapshotFile': 'snapshot.jpg',
+    'classificationPoll': 5,
+    'classificationThreshold': 0.7
 }
 
 def signal_handler(sig, frame):
     motion_capture.stop()
     web_server.stop()
+    classifier.stop()
 
 signal.signal(signal.SIGINT, signal_handler)
 
@@ -41,3 +45,6 @@ motion_capture.start()
 
 web_server = WebServer(config, message_queue)
 web_server.start()
+
+classifier = Classifier(config)
+classifier.start()

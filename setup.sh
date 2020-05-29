@@ -9,7 +9,7 @@ function activate {
 if [ ! -d $ENV_DIR ]; then
     python3 -m venv $ENV_DIR
     activate
-    pip install opencv-python
+    pip install opencv-python Keras tensorflow pillow
 else
     activate
 fi
